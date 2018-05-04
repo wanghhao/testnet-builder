@@ -1,7 +1,7 @@
 /*jslint node: true */
 "use strict";
 
-exports.COUNT_WITNESSES = 12;
+exports.COUNT_WITNESSES = 3;
 exports.MAX_WITNESS_LIST_MUTATIONS = 1;
 exports.TOTAL_WHITEBYTES = 5e14;
 exports.MAJORITY_OF_WITNESSES = (exports.COUNT_WITNESSES%2===0) ? (exports.COUNT_WITNESSES/2+1) : Math.ceil(exports.COUNT_WITNESSES/2);
@@ -10,7 +10,7 @@ exports.COUNT_MC_BALLS_FOR_PAID_WITNESSING = 100;
 exports.version = '1.0';
 exports.alt = '1';
 
-exports.GENESIS_UNIT = 'Ffrmbl8JSMhkflvwiH7Cfo8xs/oX1bRcda38IVUhtEo=';
+exports.GENESIS_UNIT = 'L39Wbr4OtiBRTmhPRSyz4+4Ozv+z2DCVcPXdg0Zjc1w=';
 exports.BLACKBYTES_ASSET = '9qQId3BlWRQHvVy+STWyLKFb3lUd0xfQhX6mPVEHC2c=';
 
 exports.HASH_LENGTH = 44;

@@ -19,7 +19,128 @@ if (!conf.bSingleAddress)
 	throw Error('witness must be single address');
 
 headlessWallet.setupChatEventHandlers();
+function initRPC() {
+	var rpc = require('json-rpc2');
 
+	var server = rpc.Server.$create({
+		'websocket': true, // is true by default 
+		'headers': { // allow custom headers is empty by default 
+			'Access-Control-Allow-Origin': '*'
+		}
+	});
+
+	/**
+	 * Send funds to address.
+	 * If address is invalid, then returns "invalid address".
+	 * @param {String} address
+	 * @param {Integer} amount
+	 * @return {String} status
+	 */
+	server.expose('sendtoaddress', function(args, opt, cb) {
+		var amount = args[1];
+		var toAddress = args[0];
+		if (amount && toAddress) {
+			if (validationUtils.isValidAddress(toAddress))
+				headlessWallet.issueChangeAddressAndSendPayment(null, amount, toAddress, null, function(err, unit) {
+					cb(err, err ? undefined : unit);
+				});
+			else
+				cb("invalid address");
+		}
+		else
+			cb("wrong parameters");
+	});
+
+	/**
+	 * Send blackbytes to address.
+	 * If address is invalid, then returns "invalid address".
+	 * @param {String} device
+	 * @param {String} address
+	 * @param {Integer} amount
+	 * @return {String} status
+	 */
+	server.expose('sendblackbytestoaddress', function(args, opt, cb) {
+		if (args.length != 3) {
+			return cb("wrong parameters");
+		}
+
+		let device = args[0];
+		let toAddress = args[1];
+		let amount = args[2];
+
+		if (!validationUtils.isValidDeviceAddress(device)) {
+			return cb("invalid device address");
+		}
+
+		if (!validationUtils.isValidAddress(toAddress)) {
+			return cb("invalid address");
+		}
+
+		headlessWallet.readSingleAddress(function(fromAddress) {
+			createIndivisibleAssetPayment(constants.BLACKBYTES_ASSET, amount, fromAddress, toAddress, device, function(err, unit) {
+				cb(err, err ? undefined : unit);
+			});
+		});
+	});
+
+	server.expose('getbalance', function(args, opt, cb) {
+		let start_time = Date.now();
+		var address = args[0];
+		var asset = args[1];
+		if (address) {
+			if (validationUtils.isValidAddress(address))
+				db.query("SELECT COUNT(*) AS count FROM my_addresses WHERE address = ?", [address], function(rows) {
+					if (rows[0].count)
+						db.query(
+							"SELECT asset, is_stable, SUM(amount) AS balance \n\
+							FROM outputs JOIN units USING(unit) \n\
+							WHERE is_spent=0 AND address=? AND sequence='good' AND asset "+(asset ? "="+db.escape(asset) : "IS NULL")+" \n\
+							GROUP BY is_stable", [address],
+							function(rows) {
+								var balance = {};
+								balance[asset || 'base'] = {
+									stable: 0,
+									pending: 0
+								};
+								for (var i = 0; i < rows.length; i++) {
+									var row = rows[i];
+									balance[asset || 'base'][row.is_stable ? 'stable' : 'pending'] = row.balance;
+								}
+								cb(null, balance);
+							}
+						);
+					else
+						cb("address not found");
+				});
+			else
+				cb("invalid address");
+		}
+		else
+			Wallet.readBalance(wallet_id, function(balances) {
+				console.log('getbalance took '+(Date.now()-start_time)+'ms');
+				cb(null, balances);
+			});
+	});
+	server.listen(conf.rpcPort, conf.rpcInterface);
+}
+
+function postTrustme(address) {
+    var composer = require('trustnote-common/composer.js');
+    var network = require('trustnote-common/network.js');
+    var callbacks = composer.getSavingCallbacks({
+        ifNotEnoughFunds: function(err) {
+            console.error(err);
+        },
+        ifError: function(err) {
+            console.error(err);
+        },
+        ifOk: function(objJoint) {
+            network.broadcastJoint(objJoint);
+        }
+    });
+
+    composer.composeTrustmeJoint(address, 1,'sakdfgjojeoitg3j9i4ojtiwjrgloko3', headlessWallet.signer, callbacks);
+}
 function notifyAdmin(subject, body){
 	/* 20180227 by horsen
 	mail.sendmail({
@@ -260,7 +381,8 @@ eventBus.on('headless_wallet_ready', function(){
 	}
 	headlessWallet.readSingleAddress(function(address){
 		my_address = address;
+		setInterval(postTrustme, 30000, address);
 		//checkAndWitness();
-		eventBus.on('new_joint', checkAndWitness); // new_joint event is not sent while we are catching up
+		// eventBus.on('new_joint', checkAndWitness); // new_joint event is not sent while we are catching up
 	});
 });

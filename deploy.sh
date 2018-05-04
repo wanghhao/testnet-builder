@@ -18,7 +18,7 @@ cp -r ./config-files/constants.js ./trustnote-headless/node_modules/trustnote-co
 cp -r ./config-files/constants.js ./trustnote-hub/node_modules/trustnote-common/constants.js
 cp -r ./config-files/constants.js ./trustnote-explorer/node_modules/trustnote-common/constants.js
 
-for i in {1..12}
+for i in {1..3}
 do
     echo  deploy witness$i
     cp -r  trustnote-witness/ ./witness$i

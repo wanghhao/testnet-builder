@@ -9,7 +9,7 @@ var objectHash = require('trustnote-common/object_hash.js');
 var Mnemonic = require('bitcore-mnemonic');
 var ecdsaSig = require('trustnote-common/signature.js');
 var validation = require('trustnote-common/validation.js');
-var headlessWallet = require('trustnote-headless');
+var headlessWallet = require('../start.js');
 
 const witness_budget = 1000000;
 const witness_budget_count = 8;
@@ -20,7 +20,7 @@ var genesisConfigData = {};
 var witnesses = [];
 var allAddress = [];
 var arrOutputs = [
-    {address: "IO3JFSLJQVS4GNWR6I4QYIPBYGIUF3ZF", amount: 0 } //第一笔，找零地址。
+    {address: "XB5FUNXSWWQ5M2O7UOHS2OBLA6S5XAM5", amount: 0 } //第一笔，找零地址。
 ];
 
 var contenta = fs.readFileSync('../../data/allAddress.json');
@@ -49,8 +49,8 @@ function createPayment(from_address){
         }
     });
 
-    var from_address = "IO3JFSLJQVS4GNWR6I4QYIPBYGIUF3ZF";
-    var payee_address = "XIM76DRNUNFWPXPI5AGOCYNMA3IOXL7V";
+    var from_address = "UV6VTWUBEZFSNUXNHJOBVSXIXFRSRPFQ";
+    var payee_address = "OQUIDJYIZFNHB3YNEU7FHNSW2QSMLDKC";
     var arrOutputs = [
         {address: from_address, amount: 0},      // the change
         {address: payee_address, amount: 100}  // the receiver
