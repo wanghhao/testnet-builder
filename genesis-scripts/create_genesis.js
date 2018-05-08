@@ -10,8 +10,10 @@ var Mnemonic = require('bitcore-mnemonic');
 var ecdsaSig = require('trustnote-common/signature.js');
 var validation = require('trustnote-common/validation.js');
 var headlessWallet = require('../start.js');
+var composer = require('trustnote-common/composer.js');
+var network = require('trustnote-common/network.js');
 
-const witness_budget = 1000000;
+const witness_budget = 10000000;
 const witness_budget_count = 8;
 const genesisConfigFile = "../../data/config.json";
 const creation_message = "先帝创业未半而花光预算"
@@ -20,7 +22,7 @@ var genesisConfigData = {};
 var witnesses = [];
 var allAddress = [];
 var arrOutputs = [
-    {address: "XB5FUNXSWWQ5M2O7UOHS2OBLA6S5XAM5", amount: 0 } //第一笔，找零地址。
+    {address: "4JU4GMCNWME23ZJLBYTN45S5VGOXSIRH", amount: 0 } //第一笔，找零地址。
 ];
 
 var contenta = fs.readFileSync('../../data/allAddress.json');
@@ -30,27 +32,32 @@ witnesses = JSON.parse(contentb);
 allAddress = JSON.parse(contenta);
 
 console.log(JSON.stringify(witnesses));
-
-for (let address of allAddress) {           // initial the payment arrOutputs
+for(var j=0;j<allAddress.length-3;j++){
+    let address=allAddress[j];
     for(var i=0; i<witness_budget_count; ++i) {
         arrOutputs.push({address: address, amount: witness_budget});
     }
 }
+// for (let address of allAddress) {           // initial the payment arrOutputs
+//     for(var i=0; i<witness_budget_count; ++i) {
+//         arrOutputs.push({address: address, amount: witness_budget});
+//     }
+// }
 
 function createPayment(from_address){
     console.log('starting createPayment');
-    var composer = require('trustnote-common/composer.js');
-    var network = require('trustnote-common/network.js');
+    
     var callbacks = composer.getSavingCallbacks({
         ifNotEnoughFunds: onError,
         ifError: onError,
         ifOk: function(objJoint){
             network.broadcastJoint(objJoint);
+            console.log("transfer successful");
         }
     });
 
-    var from_address = "UV6VTWUBEZFSNUXNHJOBVSXIXFRSRPFQ";
-    var payee_address = "OQUIDJYIZFNHB3YNEU7FHNSW2QSMLDKC";
+    var from_address = "TRLBGTP5DOL6GVIFQEHR2SOOCXGISYOD";
+    var payee_address = "XOXMICMGMB5X3NNOERTTMWYUN2DELG5B";
     var arrOutputs = [
         {address: from_address, amount: 0},      // the change
         {address: payee_address, amount: 100}  // the receiver
@@ -58,6 +65,7 @@ function createPayment(from_address){
     composer.setGenesis(false);
     composer.composePaymentJoint([from_address], arrOutputs, headlessWallet.signer, callbacks);
 }
+
 
 
 
@@ -75,6 +83,7 @@ function  rungen(){
           console.log("\n\n---------->>->> Genesis d, hash=" + genesisHash+ "\n\n");
 
           setTimeout(createPayment,1000*30);
+        
           //process.exit(0);
           // var placeholders = Array.apply(null, Array(witnesses.length)).map(function(){ return '(?)'; }).join(',');
           // console.log('will insert witnesses', witnesses);
