@@ -11,6 +11,18 @@ coverage
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
 node_modules
 data
+witness1
+witness2
+witness3
+witness4
+witness5
+witness6
+trustnote-common
+trustnote-explorer
+trustnote-headless
+trustnote-hub
+trustnote-relay
+trustnote-witness
 # Yarn package manager
 yarn.lock
 
