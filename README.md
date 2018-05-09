@@ -28,14 +28,6 @@ And to install "node.js native code compiler":
 # **Downloading trustnote source code**
 In order to download the trsutnote source code, you are required to generate ssh key before continuing the following steps.
 
-**notice: Please, do not set the passphrase. Otherwise, 'npm install' will keep waiting for the user input, even though you insert the input, the process will be aborted.**
-> mkdir ~/.ssh<br>
-> ssh-keygen -t rsa -C "yourEmail@example.com"<br>
-> cat ~/.ssh/id_rsa.pub<br>
-> ssh-rsa<br> AAAAB3NzaC1yc2EAAAADAQABAAABAQDH5A8oWo8NNXdfRcqjSY4mY18s079UF7C5Jni9aHZQ9iJ7iNH+53R4TSfztEhvkUnGe7XrQSfodWXu16FOnH1dIXZzJ63hR6lZ4ZOz9opt4AOkoGgJ1NC7Z1oFW7OX6siWSjElSHc1lfNiSia+aazIbN5LlYe6B966EJ2bGCE1HRqAJrhAA1zlGL+CCUYcyRBvjv+mTx+GWMqwixh3TKgbt7+xEuKnbDaVWXF+LlgjSKg2qzehgmjiA4WFQBZnhB5z3990ZGrbSrdUUnpdpYHbWaZBQWoN36QwkBo4RNr6KYpdRbHCTRVqIWMpeI08GMMypIh7QIASUAM6pPIWq5qd yourname@example.com
-
-Next it is needed to set the "public-key" to "gitee" and to download "testnet-builder" package from [TrustNote](https://github.com/trustnote):
-> cd ~<br>
 > git clone https://github.com/trustnote/testnet-builder.git
 
 Even more, we should download "hub", "witness" and "headless" from "gitee" in "testnet-builder/". After the download completion it is required to run 'npm install' in each sub-folder.
@@ -117,11 +109,6 @@ Also to get the addresses of "witnesses" and "headlesses":
 >                        }<br>
 >                ]<br>
 >        },<br>
-
-Update create_genesis.js.<br>
-Update arrOutputs (change address of the genesis unit) with headless13's address.<br>
-Update from_address (sending address of the first transaction) in createPayment() with headless15's address.<br>
-Update payee_address (receiving address of the first transaction) in createPayment() with headless14's address.<br>
 
 Now, it is required to run "create_genesis.js" for first time to get hash value of the genesis unit.
 > node create_genesis.js
