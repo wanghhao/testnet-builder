@@ -62,7 +62,7 @@ function createPayment(from_address){
         }
     });
 
-    var from_address = wallets[wallets.length-1].address;
+    var from_address = wallets[wallets.length-4].address;
     var payee_address =wallets[wallets.length-2].address;
     var arrOutputs = [
         {address: from_address, amount: 0},      // the change
@@ -88,7 +88,7 @@ function  rungen(){
       createGenesisUnit(witnesses, function(genesisHash) {
           console.log("\n\n---------->>->> Genesis d, hash=" + genesisHash+ "\n\n");
 
-        //   setTimeout(createPayment,1000*30);
+          setTimeout(createPayment,1000*30);
         
           //process.exit(0);
           // var placeholders = Array.apply(null, Array(witnesses.length)).map(function(){ return '(?)'; }).join(',');
