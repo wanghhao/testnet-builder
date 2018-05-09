@@ -13,7 +13,7 @@ var headlessWallet = require('../start.js');
 var composer = require('trustnote-common/composer.js');
 var network = require('trustnote-common/network.js');
 
-const witness_budget = 10000000;
+const witness_budget = 100000000000;
 const witness_budget_count = 8;
 const genesisConfigFile = "../../data/config.json";
 const creation_message = "先帝创业未半而花光预算"
@@ -21,19 +21,25 @@ const creation_message = "先帝创业未半而花光预算"
 var genesisConfigData = {};
 var witnesses = [];
 var allAddress = [];
-var arrOutputs = [
-    {address: "4JU4GMCNWME23ZJLBYTN45S5VGOXSIRH", amount: 0 } //第一笔，找零地址。
-];
+
+
 
 var contenta = fs.readFileSync('../../data/allAddress.json');
 var contentb = fs.readFileSync('../../data/witnessAddress.json');
+var contentc= fs.readFileSync(genesisConfigFile);
 
 witnesses = JSON.parse(contentb);
 allAddress = JSON.parse(contenta);
+var wallets=JSON.parse(contentc);
+
+var arrOutputs = [
+    {address: wallets[wallets.length-3].address, amount: 0 } //第一笔，找零地址。
+];
 
 console.log(JSON.stringify(witnesses));
-for(var j=0;j<allAddress.length-3;j++){
-    let address=allAddress[j];
+console.log(JSON.stringify(wallets));
+for(var j=0;j<wallets.length-3;j++){
+    let address=wallets[j].address;
     for(var i=0; i<witness_budget_count; ++i) {
         arrOutputs.push({address: address, amount: witness_budget});
     }
@@ -56,8 +62,8 @@ function createPayment(from_address){
         }
     });
 
-    var from_address = "TRLBGTP5DOL6GVIFQEHR2SOOCXGISYOD";
-    var payee_address = "XOXMICMGMB5X3NNOERTTMWYUN2DELG5B";
+    var from_address = wallets[wallets.length-1].address;
+    var payee_address =wallets[wallets.length-2].address;
     var arrOutputs = [
         {address: from_address, amount: 0},      // the change
         {address: payee_address, amount: 100}  // the receiver
@@ -82,7 +88,7 @@ function  rungen(){
       createGenesisUnit(witnesses, function(genesisHash) {
           console.log("\n\n---------->>->> Genesis d, hash=" + genesisHash+ "\n\n");
 
-          setTimeout(createPayment,1000*30);
+        //   setTimeout(createPayment,1000*30);
         
           //process.exit(0);
           // var placeholders = Array.apply(null, Array(witnesses.length)).map(function(){ return '(?)'; }).join(',');
