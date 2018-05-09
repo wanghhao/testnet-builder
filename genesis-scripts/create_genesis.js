@@ -13,8 +13,8 @@ var headlessWallet = require('../start.js');
 var composer = require('trustnote-common/composer.js');
 var network = require('trustnote-common/network.js');
 
-const witness_budget = 100000000000;
-const witness_budget_count = 8;
+const witness_budget = 1000000000000;
+const witness_budget_count = 10;
 const genesisConfigFile = "../../data/config.json";
 const creation_message = "先帝创业未半而花光预算"
 
@@ -33,7 +33,8 @@ allAddress = JSON.parse(contenta);
 var wallets=JSON.parse(contentc);
 
 var arrOutputs = [
-    {address: wallets[wallets.length-3].address, amount: 0 } //第一笔，找零地址。
+    {address: wallets[0].address, amount: 0 }, //第一笔，找零地址。
+    {address: wallets[wallets.length-1].address, amount: 1000 }
 ];
 
 console.log(JSON.stringify(witnesses));
@@ -62,7 +63,7 @@ function createPayment(from_address){
         }
     });
 
-    var from_address = wallets[wallets.length-4].address;
+    var from_address = wallets[wallets.length-1].address;
     var payee_address =wallets[wallets.length-2].address;
     var arrOutputs = [
         {address: from_address, amount: 0},      // the change
@@ -88,7 +89,7 @@ function  rungen(){
       createGenesisUnit(witnesses, function(genesisHash) {
           console.log("\n\n---------->>->> Genesis d, hash=" + genesisHash+ "\n\n");
 
-          setTimeout(createPayment,1000*30);
+          setTimeout(createPayment,1000*3);
         
           //process.exit(0);
           // var placeholders = Array.apply(null, Array(witnesses.length)).map(function(){ return '(?)'; }).join(',');
